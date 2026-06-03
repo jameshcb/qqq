@@ -14,22 +14,24 @@
 
 ## 安装(同事 / 你自己)
 
-> 前提:Claude 已登录 GitHub、有权访问 `jameshcb/qqq` 仓库。
+仓库是 public,直接装,不用任何凭证。**在终端**跑(官方 `claude` CLI,任何项目目录都行):
 
-```
-/plugin marketplace add jameshcb/qqq
-/plugin install qqq@jameshcb
-/reload-plugins
+```bash
+claude plugin marketplace add jameshcb/qqq
+claude plugin install qqq@jameshcb
 ```
 
-装完任意项目里 `/qqq` 即可触发切窗交接。
+装完**重开 Claude Code 窗口**(skill 在开窗时加载),任意项目里 `/qqq` 即可触发切窗交接。
+
+> ⚠️ **VSCode 扩展里没有 `/plugin` 斜杠命令**(那是终端 CLI 交互模式才有的)。VSCode 用户用上面的 `claude plugin …` 终端命令装即可 —— 插件装的是全局配置,CLI 和 VSCode 扩展共享同一份,装一次两边都生效。
 
 ## 更新
 
+```bash
+claude plugin marketplace update jameshcb
+claude plugin update qqq@jameshcb
 ```
-/plugin marketplace update jameshcb
-/reload-plugins
-```
+然后重开 Claude Code 窗口。
 
 ## 仓库结构
 
