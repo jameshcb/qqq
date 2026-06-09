@@ -55,9 +55,8 @@ open "vscode://anthropic.claude-code/open?prompt=${ENC}"
 ```
 > ⚠️ Step 3 写、Step 5 读必须是**同一个** `/tmp/qqq-handoff-<项目名>.txt`;bash 调用间环境变量不保留,文件名靠 `$(basename "$PWD")` 推导,别指望跨步骤传变量。
 
-然后告诉用户:**新标签页已开、第一句已预填,按回车继续**。
-> ⚠️ agent 看不到用户屏幕 → **别声称"已成功打开",让用户确认标签页 + 预填到位**。
-> 兜底:深链接失败(URI 过长 / 扩展版本差异)→ 把开场词作可粘贴 block 给用户手动 New Conversation 粘贴。
+然后一句话收尾:**新标签页已开、开场词已预填,直接按回车继续**(不必反问用户"开了没 / 对不对")。
+> 兜底:深链接万一失败(URI 过长 / 扩展版本差异),提示用户"没预填上就说一声",再把开场词作可粘贴 block 贴出来,手动 New Conversation 粘贴。
 
 ## Red Flags(自检)
 
@@ -66,7 +65,7 @@ open "vscode://anthropic.claude-code/open?prompt=${ENC}"
 - 教训写空泛、**不路由** → 白复盘
 - 开场词不可直接粘贴(缺"读什么"或"下一步")→ 下窗接不上
 - `git add` 带了已删/不存在路径 → 整个 add 中止、改动漏提还 push 半截;**add 后 `git diff --name-only` 验空 + push 后核对 HEAD**
-- 深链接 `open` 后不让用户确认就声称"已打开" → 看不到屏幕,可能没开成
+- 深链接失败时没给兜底粘贴 block → 用户无法恢复(注:正常情况直接按回车即可,**不必反问确认**)
 - 交接文件没 push 就切窗 → 下窗 pull 不到最新
 
 ## 单一真理源
