@@ -2,7 +2,7 @@
   "name": "qqq",
   "displayName": "qqq · 切窗复盘交接",
   "description": "切窗仪式:诚实复盘 + 更新交接文件 + 下窗开场词 + commit/push + vscode 深链接开预填新标签页。任何项目通用。",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "James Huang",
     "email": "huangchuanbing@gmail.com"
