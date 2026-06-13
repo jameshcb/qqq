@@ -100,6 +100,7 @@ open "vscode://anthropic.claude-code/open?prompt=${ENC}"
 - HANDOFF 按 session 追加成果复述、越摞越长 → 违 Step 3:叙事归 docs/sessions,HANDOFF ≤ 100 行滚动,超了归档最老 entry
 - 教训标「暂不进,再踩升格」却没 grep docs/sessions 查是不是已踩过 → 升格闸空转,重复教训永远进不了 skill;全局纪律别因 plugin 更新麻烦就堆在项目 session 文件
 - worktree 并存下 pnpm / git 靠继承 cwd、不带 `-C`/绝对路径 → 跑错树/落错分支高危(2026-06-12 二踩升格),按〈多窗并行防线〉第 5 条命令级自检
+- 多行 git commit message 用 `git commit -F -` 喂 stdin 或 heredoc → ① 喂 stdin 跨子命令行为不一致 ② commit 前 hook/guard 看整条命令串、heredoc body 里的命令字样(vitest / prisma / rm 等)被误拦 exit 非 0;**一律 Write 临时文件 + `git commit -F <临时文件>`,禁 `-F -` + heredoc**(2026-06-13 三踩升格兑现)
 
 ## 单一真理源
 
