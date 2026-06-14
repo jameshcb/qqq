@@ -11,6 +11,7 @@
 5. **开预填的新 Claude Code 标签页** —— `vscode://anthropic.claude-code/open?prompt=…` 深链接,提示词已预填,按回车即可继续
 
 > 深链接法 port 自 yeehang2026 的 `/handoff`;实测能开预填标签页(唯一手动:按一下回车,预填不自动发送 = Anthropic 设计限制)。
+> 跨平台(macOS `open` / Linux `xdg-open` / Windows `start`);handoff 较长时(encoded URL 逼近 Windows 协议处理器 ≈2048 上限)自动降级成预填「读 /tmp 那份交接文件」短指针,长度免疫。
 
 ## 安装(同事 / 你自己)
 
