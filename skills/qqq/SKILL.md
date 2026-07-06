@@ -1,6 +1,6 @@
 ---
 name: qqq
-description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / 新开窗口 / qqq / 下个对话说什么, or when wrapping up a work session in any project (大里程碑完成 / auto-compact 第 2 次 / 上下文 ≥ 40% / 中文出错别字). Symptoms: about to hand off to a new window, context getting full, ending a session.
+description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / 新开窗口 / qqq / 交接 / handoff / 下个对话说什么, or when wrapping up a work session in any project (大里程碑完成 / auto-compact 第 2 次 / 上下文 ≥ 40% / 中文出错别字). Symptoms: about to hand off to a new window, context getting full, ending a session.
 ---
 
 # qqq — 切窗复盘 + 交接 + 开新窗(全局通用)
@@ -17,12 +17,14 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 
 ## When to Use
 
-**MUST 跑**:用户说"切窗 / 收尾 / 换窗 / qqq / 下个对话说什么";会话收尾 / 上下文 ≥ 40%(≥ 70% 立即)。
+**MUST 跑**:触发词全集见 frontmatter description(触发层唯一权威,此处不重抄);上下文 ≥ 40% 该跑、**≥ 70% 立即**。
 **不要用**:会话中途、没有切窗意图。
 
 ## 开场先认项目(全局 skill 必做)
 
 读本项目根的 `CLAUDE.md`(若有)→ 认它的:交接文件(`HANDOFF.md` 或等价)/ 切窗约定 / push 习惯(remote+分支)/ 决策文件(`decisions.md` 等)/ 执行追踪 skill。**后续各步锚这些项目本地约定**,不假设结构。
+
+**接着查本仓是否落后 origin**:`git fetch origin` + `git log --oneline HEAD..@{upstream}`,输出非空 = 本仓落后(多为另一窗 / 另一份 clone 所推)→ **停手报告用户**,确认后仅 `git pull --ff-only` 追平再动 HANDOFF;已分叉或有未提交改动 → 停手问用户,禁自动 rebase / merge(rebase 本就是红线)。(2026-06-25 / 07-07 实发:另一窗把 qqq 推到 0.8.1,本地 dev 仓停 0.8.0 十余天靠人肉才发现;reflog 可考 06-12、06-25 已各追平过一次,过二踩闸升格)
 
 ## 多窗并行防线(同仓库多窗已是常态;2026-06-11 实发事故固化)
 
@@ -41,8 +43,10 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 三段都不许省:
 - **✅ 做得好的** —— 具体到事,不空夸
 - **⚠️ 做得不好的** —— **必填,≥ 1 条具体项**。禁"本次很顺利/很完美"敷衍(谄媚)。绕弯、漏了、返工、过度承诺、该问没问 —— 照实写
-- **🎓 提炼教训 + 路由** —— 每条教训**必指定落地处**(否则白复盘):一次性状态 → 项目交接文件;可复用纪律 → 对应 skill 的 Red Flags;项目规范 → 项目 CLAUDE.md;业务决策 → 项目决策文件(用户拍板)。**本次确无可复用教训 → 明写「无教训 + 理由」**,禁止为凑数编教训(和谄媚同罪:既不许假装完美,也不许硬编问题)
-- **路由前先查重(再踩升格闸)** —— 教训想标「暂不进 skill,再踩升格」前,先 `grep -n "🎓" docs/sessions/*.md` 扫历史教训:**同类教训已出现过 = 这就是第二次踩 = 当场升格**进对应 skill Red Flags / 项目 CLAUDE.md,不许再欠;「再踩升格」只许欠一次。全局通用的纪律(如 git / 多窗类)→ 升格进本 skill(qqq 是 plugin,改它 = 改 marketplace 仓库 + bump 版本,别因嫌麻烦把全局教训堆在项目 session 文件里)
+- **🎓 提炼教训 + 路由** —— 每条教训**必指定落地处**(否则白复盘):一次性状态 → 项目交接文件;可复用纪律 → 对应 skill(细节进步骤正文,Red Flags 只加一行指针);项目规范 → 项目 CLAUDE.md;业务决策 → 项目决策文件(用户拍板);**跨项目且与任何 skill 无关的个人工程纪律 → `~/.claude/CLAUDE.md`**(全局规范,需用户拍板)。**本次确无可复用教训 → 明写「无教训 + 理由」**,禁止为凑数编教训(和谄媚同罪:既不许假装完美,也不许硬编问题)
+- **路由前先查重(再踩升格闸)** —— 教训想标「暂不进 skill,再踩升格」前,先扫历史教训:`[ -d docs/sessions ] && grep -n "🎓" docs/sessions/*.md || echo "(无历史 sessions,视同首踩)"`(项目 CLAUDE.md 声明了别的归档位置就扫那个;「不留 sessions」的项目此闸不适用):**同类教训已出现过 = 这就是第二次踩 = 当场升格**进对应 skill / 项目 CLAUDE.md,不许再欠;「再踩升格」只许欠一次。全局通用的纪律(如 git / 多窗类)→ 升格进本 skill,别因嫌麻烦把全局教训堆在项目 session 文件里
+
+**升格操作链(教训要进本 skill 时,五步走全;qqq 是 plugin,只改文件不发版 = 谁也拿不到)**:① 改 `qqq-plugin/skills/qqq/` → ② **同步 bump `.claude-plugin/plugin.json` + `marketplace.json` 双版本** —— version 是 Claude Code 的更新缓存键,不 bump 光推 commit,跑 update 也拿不到新文件 → ③ `git -C <qqq-plugin 绝对路径>` 就地 commit+push(不离开当前项目工作树,呼应防线第 5 条)→ ④ **本机跑 README〈更新〉两条命令 + 重开窗口**,否则本机下窗仍跑旧版(2026-06-25 / 07-07 实发:已装插件停旧版十余天)→ ⑤ 通知同事跑同两条命令。
 
 ### Step 2 — 归档会话记录(当天一份,多窗汇总)
 
@@ -58,7 +62,7 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 
 ### Step 3 — 更新本项目交接文件(只写「现在」,不写历史)
 
-把"**停在哪 / 下一步 / 待决**"写进本项目的 HANDOFF(或等价文件)。**HANDOFF = 前瞻指针,不是日志**:
+把"**停在哪 / 下一步 / 待决**"写进本项目的 HANDOFF(或等价文件);交接文件不存在(裸项目首跑)→ 先新建骨架(§1 当前状态 / §2 下一步 / §3 待决)再写。**HANDOFF = 前瞻指针,不是日志**:
 - **写入门(治本)**:只收「还没做的」—— 当前状态 / 下一步 / 待决。一条内容只要能用「已完成」描述(✅ / commit SHA / 测试数 / 已合 PR# / 日期事件)= 历史 → 落 Step 2 的 docs/sessions,**禁进 HANDOFF**
 - **更新 = 替换不是追加**:每次切窗先删掉上窗已变历史的项(✅完成的下一步、已落地的待决),再写新的下一步;HANDOFF 永远只有「现在朝前看」那一层、不积累
 - **尺寸只作烟雾报警**:更新后 `wc -c HANDOFF.md` 扫一眼,异常大(经验阈值如 >20KB 或单段 >800 字符)= 历史又漏进来了的信号 → 回写入门清一遍,**而不是「删到塞得下」**;行数 / 字符数本身不是规矩,内容性质才是
@@ -68,21 +72,22 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 
 > **原则:开场词 = 指针不是容器,状态只活在 HANDOFF,开场词只指过去。**
 
-用 [assets/handoff-prompt-template.md](assets/handoff-prompt-template.md)。**自包含 = 列全「读什么」的指针**(项目交接文件 + 相关决策 + 本会话关键产出路径),不是把内容搬进来。三件套缺一不合格:① 读什么(指针)② 当前状态 ③ 下一步选项(让下窗跟用户确认)。
+用 [assets/handoff-prompt-template.md](assets/handoff-prompt-template.md):**逐槽匹配模板,槽外内容一律不进**;禁抄什么的细节以模板〈填写要点〉为唯一权威,不在此重抄。三件套缺一不合格:① 读什么(指针)② 当前状态(硬性 1-2 句:最新落点 + 指 HANDOFF §1)③ 下一步选项(让下窗跟用户确认)。
 
-硬约束(防开场词膨胀):
-- **第一行必须是带日期时间的中文主题锚**:`🪟 <YYYY-MM-DD HH:MM> 开窗 · 接 <项目> · 本窗:<中文主题一句>`,否则不合格 —— 新窗第一屏是英文 claude-mem 上下文,James 靠这行一眼认出何时开窗、干什么。时间取 Step 4 生成当刻 `date '+%Y-%m-%d %H:%M'`(文件名 `<HHMM>` 复用同一时刻 `date +%H%M`,保持一致)。主题句概括**新窗要干的事(下一步)**,是主题短语,**别把「当前状态」内容抄进锚行**(否则又违指针原则 + 双份维护)
-- **「当前状态」硬性 1-2 句**:只说最新落点 + 指 HANDOFF §1。**禁内联 commit hash 流水账**(这些 HANDOFF 都有)、禁把 HANDOFF §1/§2 内容抄进开场词 —— 状态权威在 HANDOFF,开场词内联 = 双份维护、且会漂
-- **禁重贴 CLAUDE/HANDOFF 已有内容**:纪律一行带过(「守 CLAUDE §N + 红线」),下窗本来就读 CLAUDE.md
-- **开场词只允许在指针之外额外承载两样**:① 本窗新教训(一句)② 待决(一句)。其余一律指过去
-- **软上限 ≤1KB / ≤25 行**(开场词是一次性指针、本就该极小;类比 HANDOFF 只收「还没做的」);超了 = 在抄已有内容,删到只剩指针
+硬约束:
+- **第一行必须是带日期时间的中文主题锚**:`🪟 <YYYY-MM-DD HH:MM> 开窗 · 接 <项目> · 本窗:<中文主题一句>`,否则不合格 —— 新窗第一屏是英文 claude-mem 上下文,James 靠这行一眼认出何时开窗、干什么。时间取 **Step 4 生成当刻** `date '+%Y-%m-%d %H:%M'`(文件名 `<HHMM>` 复用同一时刻 `date +%H%M`);主题句 = 新窗要干的事(下一步),别把「当前状态」抄进锚行
+- **指针之外只额外承载两样**:① 本窗新教训(一句)② 待决(一句)
+- **软上限 ≤1KB / ≤25 行**:超了 = 在抄 HANDOFF/CLAUDE 已有内容,删到只剩指针
 
 写进 **`/tmp/qqq-handoff-<项目名>-<HHMM>.txt`**(`<项目名>` = 项目根目录名,如 `tops`;`<HHMM>` = 写入当刻时分,`date +%H%M`)——项目名防两窗两项目互覆,**时分防同项目两窗同时切窗互覆**。
 
 ### Step 5 — commit + push
 
-交接文件 / skill / 规范改动 commit → push 到本项目对应 remote+分支(commit 数 ≥ 5 给简短列表;**删除 / force / schema 迁移 / 密钥等红线操作先问用户**)。
-**add 前先 `git branch --show-current` 复认分支 + 只 add 指定路径(禁 `-A`)**(详〈多窗并行防线〉);**`git add` 后必 `git diff --name-only` 确认暂存到位再 commit**:别把已删/不存在路径塞进 `git add`(整个 add 会中止 → 内容漏提);push 后 `git show HEAD:<file>` 核对真有改动,别 push 半截。
+交接文件 / skill / 规范改动 commit → push 到本项目对应 remote+分支(commit 数 ≥ 5 给简短列表;**删除 / force / schema 迁移 / 密钥等红线操作先问用户**)。纪律:
+- **add 前先 `git branch --show-current` 复认分支 + 只 add 指定路径(禁 `-A`)**(详〈多窗并行防线〉);**`git add` 后必 `git diff --name-only` 确认暂存到位再 commit**:别把已删/不存在路径塞进 `git add`(整个 add 会中止 → 内容漏提)
+- **多行 commit message:Write 临时文件 → `git commit -F <临时文件>`,禁 `-F -` 喂 stdin、禁 heredoc** —— ① 喂 stdin 跨子命令行为不一致 ② commit 前 hook/guard 看整条命令串,heredoc body 里的命令字样(vitest / prisma / rm 等)被误拦 exit 非 0(2026-06-13 三踩升格兑现)
+- **push 前 `git fetch` 复认不落后**(呼应〈开场先认项目〉落后检查;落后 → 停手问用户);push 后 `git show HEAD:<file>` 核对真有改动,别 push 半截
+- 本次改动若落在 qqq 本体 → push 后按 Step 1〈升格操作链〉④⑤ 走:本机同步 + 重开窗提示,再通知同事
 
 ### Step 6 — 开预填的新 Claude Code 标签页(vscode 深链接,主路径)
 
@@ -96,8 +101,8 @@ ENC=$(node -e 'process.stdout.write(encodeURIComponent(require("fs").readFileSyn
 if [ ${#ENC} -le 1900 ]; then
   PROMPT="$ENC"
 else
-  # 降级短指针也带「日期时间 + 中文主题」锚(James 此时看到的是短指针本身,不是文件内容);date / $HANDOFF 由 shell 展开,<项目>/<主题> 助手写死填入(同写死文件名)
-  PROMPT=$(node -e 'process.stdout.write(encodeURIComponent(process.argv[1]))' "🪟 $(date '+%Y-%m-%d %H:%M') 开窗 · 接 <项目>(本窗:<中文主题一句>)。先读 $HANDOFF 全文(读什么 / 当前状态 / 下一步都在里面),照它开场,再跟我确认走哪条。")
+  # 降级短指针锚行与 Step 4 规范同构(James 此时看到的是短指针本身,不是文件内容);date / $HANDOFF 由 shell 展开,<项目>/<主题> 助手写死填入(同写死文件名)
+  PROMPT=$(node -e 'process.stdout.write(encodeURIComponent(process.argv[1]))' "🪟 $(date '+%Y-%m-%d %H:%M') 开窗 · 接 <项目> · 本窗:<中文主题一句>。先读 $HANDOFF 全文(读什么 / 当前状态 / 下一步都在里面),照它开场,再跟我确认走哪条;该文件若已不存在(/tmp 重启即清),改读本项目 HANDOFF §1 + docs/sessions/<今天>.md 扫 ⚠️🎓。")
 fi
 URL="vscode://anthropic.claude-code/open?prompt=${PROMPT}"
 
@@ -107,35 +112,48 @@ case "$(uname -s)" in                 # 跨平台开链接(原来只写死 macOS
   *)      cmd //c start "" "$URL" ;;  # Windows(Git Bash/MSYS:MINGW*/MSYS*/CYGWIN*)
 esac
 ```
-> ⚠️ Step 6 用 **Step 4 实际写入的确切文件名**(刚写的,对话上下文里有,直接写死进命令);bash 调用间环境变量不保留,别指望跨步骤传变量。万一丢了:`ls -t /tmp/qqq-handoff-$(basename "$PWD")-*.txt | head -1` 取本项目最新一份(同项目双窗同时切窗时,确认时分是自己那份)。
+> ⚠️ Step 6 用 **Step 4 实际写入的确切文件名**(刚写的,对话上下文里有,直接写死进命令);bash 调用间环境变量不保留,别指望跨步骤传变量。万一丢了:`ls -t /tmp/qqq-handoff-<项目名>-*.txt | head -1`(`<项目名>` 同上文写死填入,禁 `$(basename "$PWD")` —— 防线第 5 条禁靠继承 cwd;同项目双窗同时切窗时,确认时分是自己那份)。
 > ⚠️ 降级到短指针那条**依赖 handoff 文件自包含**(Step 4 已要求);文件不自包含时降级 = 下窗读到残篇,所以 Step 4 的「读什么 / 当前状态 / 下一步」三件套是硬约束。
+> 验证状态:macOS 实测 ✓(2026-06-04);Windows / Linux 分支 2026-06-14 依事故报告推导、**待真机回归**(请当初报 bug 的 Windows 同事装新版跑一次完整切窗即可销此注)。
 
-然后一句话收尾:**新标签页已开、开场词已预填,直接按回车继续**(不必反问用户"开了没 / 对不对");若走了降级分支,顺带说一句「这次 handoff 较长,新窗预填的是『去读 /tmp 那份』,按回车它会自己读」。
-> 兜底:深链接万一失败(扩展版本差异等;URI 过长已由上面的长度闸自动降级,不再是失败因),提示用户"没预填上就说一声",再把开场词作可粘贴 block 贴出来,手动 New Conversation 粘贴。
+然后一句话收尾:**新标签页已开、开场词应已预填 —— 直接按回车;万一预填是空的说一声,我把开场词贴出来**(仍是陈述,不反问"开了没 / 对不对");若走了降级分支,顺带说一句「这次 handoff 较长,新窗预填的是『去读 /tmp 那份』,按回车它会自己读」。
+> 兜底:深链接万一失败(扩展版本差异等;URI 过长已由长度闸自动降级,不再是失败因)→ 把开场词作可粘贴 block 贴出来,手动 New Conversation 粘贴。
 
 ## Red Flags(自检)
 
-- 切窗只更新交接文件、**跳过复盘** → 违 Step 1
-- 复盘只列"做得好的"、不列"做得不好的"(或"很完美"敷衍)→ **谄媚**,必补 ≥ 1 条真问题
-- 教训写空泛、**不路由** → 白复盘
-- 没真教训却硬编一条凑数 → 和谄媚同罪;明写「无教训 + 理由」即可
-- 开场词不可直接粘贴(缺"读什么"或"下一步")→ 下窗接不上
-- `git add` 带了已删/不存在路径 → 整个 add 中止、改动漏提还 push 半截;**add 后 `git diff --name-only` 验空 + push 后核对 HEAD**
-- 深链接失败时没给兜底粘贴 block → 用户无法恢复(注:正常情况直接按回车即可,**不必反问确认**)
-- Step 6 直接 `open "...?prompt=${ENC}"` 不卡长度 / 按「原始字数」估长度 → Windows `start`(ShellExecute)≈2048 上限,URL 超了**静默不开标签页**(2026-06-14 同事实发);中文 encode 膨胀 ~9x,**必须按 `${#ENC}` 卡 encoded 长度**(≤1900),超了走「读 handoff 文件」短指针降级,别靠数原始字数
-- Step 6 写死 macOS `open` → Windows / Linux 同事开不了;**按 `uname -s` 分支** `open` / `xdg-open` / `cmd //c start`
-- 会话记录当天另起新文件 / 覆盖别窗条目 → 应**追加**到 `docs/sessions/<当天>.md` 同一份,只追加不动旧条目
-- 会话记录存了逐字全文 → 噪音;只留纪要 + 关键原话 + 复盘
-- 交接文件没 push 就切窗 → 下窗 pull 不到最新
-- 切窗 `git add` 前没复认当前分支 / 用了 `git add -A` → 多窗共享工作树下 commit 落错分支 / 捎走别窗文件(2026-06-11 实发),按〈多窗并行防线〉走
-- HANDOFF 写进已完成的事(✅ / commit SHA / 测试数 / 已合 PR# / 过去事件)→ 违 Step 3 写入门:历史归 docs/sessions,HANDOFF 只收「还没做的」
-- HANDOFF 越摞越长 / 单段塞成数千字符的巨段 → 是症状不是病:根因 = 历史漏进来了(纯尺寸闸 ≤100 行 / ≤800 字符曾形同虚设、胖单格照样膨到 14KB)→ 按写入门删已完成项,不是压缩措辞
-- 开场词把 HANDOFF §1/§2 内容内联抄一遍 / 贴 commit hash 流水账 / 整段重贴 CLAUDE 红线 → 违 Step 4「指针不是容器」:当前状态压到 1-2 句指 HANDOFF §1,纪律一行带过,只额外带「本窗新教训 + 待决」,≤1KB/≤25 行
-- 开场词每窗往「当前状态」append 自己的里程碑、和 HANDOFF 一起涨 → 双份维护、会漂;状态只活在 HANDOFF,开场词只指过去
-- 开场词第一行缺日期时间 / 缺中文主题锚(降级短指针同样)→ 违 Step 4:新窗第一屏全是英文 claude-mem 上下文,没这条 `🪟 <日期时间> 开窗 · 接 <项目> · 本窗:…` James 一眼认不出何时开窗、干什么
-- 教训标「暂不进,再踩升格」却没 grep docs/sessions 查是不是已踩过 → 升格闸空转,重复教训永远进不了 skill;全局纪律别因 plugin 更新麻烦就堆在项目 session 文件
-- worktree 并存下 pnpm / git 靠继承 cwd、不带 `-C`/绝对路径 → 跑错树/落错分支高危(2026-06-12 二踩升格),按〈多窗并行防线〉第 5 条命令级自检
-- 多行 git commit message 用 `git commit -F -` 喂 stdin 或 heredoc → ① 喂 stdin 跨子命令行为不一致 ② commit 前 hook/guard 看整条命令串、heredoc body 里的命令字样(vitest / prisma / rm 等)被误拦 exit 非 0;**一律 Write 临时文件 + `git commit -F <临时文件>`,禁 `-F -` + heredoc**(2026-06-13 三踩升格兑现)
+> 维护纪律:新教训的细节(事故日期 / 原理 / 补救)进对应步骤正文,这里**只加一行「症状 → 回哪」**,不双写。
+
+**复盘 / 归档**
+- 切窗只更新交接文件、跳过复盘 → 违 Step 1
+- 复盘只列"做得好的" / "很完美"敷衍 → 谄媚,回 Step 1 补 ≥ 1 条真问题
+- 教训写空泛、不路由 → 白复盘,回 Step 1
+- 没真教训却硬编一条凑数 → 和谄媚同罪,回 Step 1(明写「无教训 + 理由」)
+- 标「暂不进,再踩升格」却没扫历史教训 → 升格闸空转,回 Step 1 查重
+- 会话记录当天另起新文件 / 覆盖别窗条目 → 回 Step 2(同一份、只追加)
+- 会话记录存逐字全文 → 噪音,回 Step 2(纪要 + 关键原话 + 复盘)
+
+**HANDOFF**
+- 写进已完成的事(✅ / SHA / 测试数 / 已合 PR#)→ 违 Step 3 写入门,历史归 docs/sessions
+- 越摞越长 / 单段膨成巨段 → 症状不是病,回 Step 3 按写入门删历史,不是压缩措辞
+
+**开场词**
+- 缺"读什么 / 当前状态 / 下一步"任一 → 下窗接不上,回 Step 4 三件套
+- 第一行缺日期时间 / 缺中文主题锚(降级短指针同样)→ 违 Step 4 锚行
+- 内联抄 HANDOFF §1/§2 / 贴 commit hash 流水账 / 重贴 CLAUDE 红线 → 违「指针不是容器」,回 Step 4 + 模板〈填写要点〉
+- 每窗往「当前状态」append 自己的里程碑 → 双份维护会漂,回 Step 4(状态只活在 HANDOFF)
+
+**git**
+- 切窗起手 / push 前没 fetch 查落后 → 回〈开场先认项目〉 / Step 5
+- add 前没复认分支 / 用了 `git add -A` → 回〈多窗并行防线〉1-2
+- add 带了已删路径 / add 后没验暂存 / push 后没核对 HEAD → 回 Step 5
+- 交接文件没 push 就切窗 → 下窗 pull 不到,回 Step 5
+- worktree 并存下 pnpm / git 靠继承 cwd → 回〈多窗并行防线〉5
+- 多行 commit message 用 `-F -` / heredoc → 回 Step 5(Write 临时文件 + `-F <文件>`)
+
+**深链接**
+- 不卡 encoded 长度 / 按「原始字数」估长度 → 回 Step 6 长度闸(按 `${#ENC}` 卡 ≤1900)
+- 写死 macOS `open` → 回 Step 6 `uname -s` 分支
+- 深链接失败没给兜底粘贴 block → 回 Step 6 兜底
 
 ## 单一真理源
 
