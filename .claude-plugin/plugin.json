@@ -2,7 +2,7 @@
   "name": "qqq",
   "displayName": "qqq · 切窗复盘交接",
   "description": "切窗(收尾/换窗)仪式:诚实复盘(好/坏/教训并路由)+ 归档会话记录到 docs/sessions(当天一份、多窗汇总)+ 更新本项目交接文件 + 生成可粘贴的下窗开场词 + commit/push + vscode 深链接开预填新 Claude Code 标签页。任何项目通用。",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": {
     "name": "James Huang",
     "email": "huangchuanbing@gmail.com"

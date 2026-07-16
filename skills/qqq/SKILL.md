@@ -35,6 +35,7 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 3. **commit 已误落别的分支** → 不 reset --hard、不在共享工作树切分支救:① `git tag` 保住误落 commit(零扰动)② `git reset --soft` 还原该分支 tip ③ `git restore` 恢复对方暂存 ④ `git worktree add --detach` 隔离树里 cherry-pick 到正确分支再 push ⑤ 清 tag / worktree
 4. 同项目两窗同时切窗:Step 2 归档**只追加**(既有纪律);Step 4 开场词文件名带时分(见 Step 4),互不覆盖
 5. **多树形态(worktree 并存)同样中招:pnpm / git 一律 `git -C <绝对路径>` / `pnpm -C <绝对路径>` 或绝对路径起手,禁靠继承 cwd** —— 主树 + worktree 并存时 cwd 停在哪棵树取决于上一条命令,靠 cwd 跑测试 / add / commit = 跑错树、落错分支同款事故;**当窗刚立过规也会顺手漏,要做命令级自检**(每条命令带 -C,不是开场 cd 一次完事;2026-06-12 两窗实发二踩后升格)
+6. **add 前逐文件 `git status <file>` 确认还 dirty;commit 后 `git show --stat HEAD` 全量核对** —— 并发窗的 `git add -A` / `commit -a` 会把你未提交的编辑卷进**它的** commit:已被卷走的文件再传 add = staged 落空 = partial commit;核对发现**自己的文件不在自己 commit 里**,先 `git reflog -8` 判是否被别窗卷走(卷走它的 commit 已在 origin = 内容没丢,别当「编辑丢失」惊慌),并告知用户存在并发会话(2026-07-15 实发:HANDOFF 编辑被并发窗 commit 卷走)
 
 ## 仪式(6 步,顺序走)
 
@@ -46,7 +47,7 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 - **🎓 提炼教训 + 路由** —— 每条教训**必指定落地处**(否则白复盘):一次性状态 → 项目交接文件;可复用纪律 → 对应 skill(细节进步骤正文,Red Flags 只加一行指针);项目规范 → 项目 CLAUDE.md;业务决策 → 项目决策文件(用户拍板);**跨项目且与任何 skill 无关的个人工程纪律 → `~/.claude/CLAUDE.md`**(全局规范,需用户拍板)。**本次确无可复用教训 → 明写「无教训 + 理由」**,禁止为凑数编教训(和谄媚同罪:既不许假装完美,也不许硬编问题)
 - **路由前先查重(再踩升格闸)** —— 教训想标「暂不进 skill,再踩升格」前,先扫历史教训:`[ -d docs/sessions ] && grep -n "🎓" docs/sessions/*.md || echo "(无历史 sessions,视同首踩)"`(项目 CLAUDE.md 声明了别的归档位置就扫那个;「不留 sessions」的项目此闸不适用):**同类教训已出现过 = 这就是第二次踩 = 当场升格**进对应 skill / 项目 CLAUDE.md,不许再欠;「再踩升格」只许欠一次。全局通用的纪律(如 git / 多窗类)→ 升格进本 skill,别因嫌麻烦把全局教训堆在项目 session 文件里
 
-**升格操作链(教训要进本 skill 时,五步走全;qqq 是 plugin,只改文件不发版 = 谁也拿不到)**:① 改 `qqq-plugin/skills/qqq/` → ② **同步 bump `.claude-plugin/plugin.json` + `marketplace.json` 双版本** —— version 是 Claude Code 的更新缓存键,不 bump 光推 commit,跑 update 也拿不到新文件 → ③ `git -C <qqq-plugin 绝对路径>` 就地 commit+push(不离开当前项目工作树,呼应防线第 5 条)→ ④ **本机跑 README〈更新〉两条命令 + 重开窗口**,否则本机下窗仍跑旧版(2026-06-25 / 07-07 实发:已装插件停旧版十余天)→ ⑤ 通知同事跑同两条命令。
+**升格操作链(教训要进本 skill 时,五步走全;qqq 是 plugin,只改文件不发版 = 谁也拿不到)**:⓪ 本机无 qqq-plugin checkout(装上的 plugin 缓存 ≠ dev 仓)→ 先 `git clone https://github.com/jameshcb/qqq` 到固定位置再走链 → ① 改 `qqq-plugin/skills/qqq/` → ② **同步 bump `.claude-plugin/plugin.json` + `marketplace.json` 双版本** —— version 是 Claude Code 的更新缓存键,不 bump 光推 commit,跑 update 也拿不到新文件 → ③ `git -C <qqq-plugin 绝对路径>` 就地 commit+push(不离开当前项目工作树,呼应防线第 5 条)→ ④ **本机跑 README〈更新〉两条命令 + 重开窗口**,否则本机下窗仍跑旧版(2026-06-25 / 07-07 实发:已装插件停旧版十余天)→ ⑤ 通知同事跑同两条命令。
 
 ### Step 2 — 归档会话记录(当天一份,多窗汇总)
 
@@ -58,7 +59,7 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 - **关键原话** —— 几句定调的对话原话,`> ` 引用
 - **复盘 ⚠️🎓** —— 直接搬 Step 1 的「做得不好的」+「教训」,给复盘安永久的家
 - **产出文件** —— 路径 + 一句话
-> 定位:claude-mem 是 DB、HANDOFF 朝前看;这份是可翻可 grep 的人读历史,也是 Step 1 复盘的永久落点。
+> 定位:自动记忆注入上下文管机器侧记忆、HANDOFF 朝前看;这份是可翻可 grep 的人读历史,也是 Step 1 复盘的永久落点。
 
 ### Step 3 — 更新本项目交接文件(只写「现在」,不写历史)
 
@@ -75,7 +76,7 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 用 [assets/handoff-prompt-template.md](assets/handoff-prompt-template.md):**逐槽匹配模板,槽外内容一律不进**;禁抄什么的细节以模板〈填写要点〉为唯一权威,不在此重抄。三件套缺一不合格:① 读什么(指针)② 当前状态(硬性 1-2 句:最新落点 + 指 HANDOFF §1)③ 下一步选项(让下窗跟用户确认)。
 
 硬约束:
-- **第一行必须是带日期时间的中文主题锚**:`🪟 <YYYY-MM-DD HH:MM> 开窗 · 接 <项目> · 本窗:<中文主题一句>`,否则不合格 —— 新窗第一屏是英文 claude-mem 上下文,James 靠这行一眼认出何时开窗、干什么。时间取 **Step 4 生成当刻** `date '+%Y-%m-%d %H:%M'`(文件名 `<HHMM>` 复用同一时刻 `date +%H%M`);主题句 = 新窗要干的事(下一步),别把「当前状态」抄进锚行
+- **第一行必须是带日期时间的中文主题锚**:`🪟 <YYYY-MM-DD HH:MM> 开窗 · 接 <项目> · 本窗:<中文主题一句>`,否则不合格 —— 新窗第一屏是英文的自动记忆注入上下文,James 靠这行一眼认出何时开窗、干什么。时间取 **Step 4 生成当刻** `date '+%Y-%m-%d %H:%M'`(文件名 `<HHMM>` 复用同一时刻 `date +%H%M`);主题句 = 新窗要干的事(下一步),别把「当前状态」抄进锚行
 - **指针之外只额外承载两样**:① 本窗新教训(一句)② 待决(一句)
 - **软上限 ≤1KB / ≤25 行**:超了 = 在抄 HANDOFF/CLAUDE 已有内容,删到只剩指针
 
@@ -83,10 +84,13 @@ description: Use when the user says 切窗 / 收尾 / 结束会话 / 换窗 / �
 
 ### Step 5 — commit + push
 
+> **先分流**:项目 CLAUDE.md 声明了收尾脚本(如 TOPS `scripts/qqq-sync.sh`)→ git 收尾**走脚本**,本节手敲流程只作**无脚本项目的兜底**——脚本项目手敲多行 git 串多半正违反该项目自己的红线。
+
 交接文件 / skill / 规范改动 commit → push 到本项目对应 remote+分支(commit 数 ≥ 5 给简短列表;**删除 / force / schema 迁移 / 密钥等红线操作先问用户**)。纪律:
 - **add 前先 `git branch --show-current` 复认分支 + 只 add 指定路径(禁 `-A`)**(详〈多窗并行防线〉);**`git add` 后必 `git diff --name-only` 确认暂存到位再 commit**:别把已删/不存在路径塞进 `git add`(整个 add 会中止 → 内容漏提)
 - **多行 commit message:Write 临时文件 → `git commit -F <临时文件>`,禁 `-F -` 喂 stdin、禁 heredoc** —— ① 喂 stdin 跨子命令行为不一致 ② commit 前 hook/guard 看整条命令串,heredoc body 里的命令字样(vitest / prisma / rm 等)被误拦 exit 非 0(2026-06-13 三踩升格兑现)
-- **push 前 `git fetch` 复认不落后**(呼应〈开场先认项目〉落后检查;落后 → 停手问用户);push 后 `git show HEAD:<file>` 核对真有改动,别 push 半截
+- **push 前自查本窗有无活跃 no-push / STOP 指令** —— 有则**跳过 push、只 commit**,并在复盘明写「push 已扣住待批」;显式红线必须压过切窗默认 push,走收尾脚本(qqq-sync 类)同样要拦它的 push 步(2026-07-13 实发:no-push 红线挂着,切窗默认 push 把 14 笔该扣的 commit 推上 origin)
+- **push 前 `git fetch` 复认不落后**(呼应〈开场先认项目〉落后检查;落后 → 停手问用户);**commit 后 `git show --stat HEAD` 全量核对**(每个改动文件都真在这笔里;详〈多窗并行防线〉6),别 push 半截
 - 本次改动若落在 qqq 本体 → push 后按 Step 1〈升格操作链〉④⑤ 走:本机同步 + 重开窗提示,再通知同事
 
 ### Step 6 — 开预填的新 Claude Code 标签页(vscode 深链接,主路径)
@@ -143,9 +147,11 @@ esac
 - 每窗往「当前状态」append 自己的里程碑 → 双份维护会漂,回 Step 4(状态只活在 HANDOFF)
 
 **git**
+- 项目声明了收尾脚本(如 qqq-sync)却手敲多行 git 串 → 回 Step 5 分流(走脚本)
+- 活跃 no-push / STOP 红线下照常 push → 回 Step 5 push 前置闸
 - 切窗起手 / push 前没 fetch 查落后 → 回〈开场先认项目〉 / Step 5
-- add 前没复认分支 / 用了 `git add -A` → 回〈多窗并行防线〉1-2
-- add 带了已删路径 / add 后没验暂存 / push 后没核对 HEAD → 回 Step 5
+- add 前没复认分支 / 用了 `git add -A` / 没逐文件确认还 dirty → 回〈多窗并行防线〉1-2、6
+- add 带了已删路径 / add 后没验暂存 / commit 后没 `git show --stat HEAD` 核对 → 回 Step 5
 - 交接文件没 push 就切窗 → 下窗 pull 不到,回 Step 5
 - worktree 并存下 pnpm / git 靠继承 cwd → 回〈多窗并行防线〉5
 - 多行 commit message 用 `-F -` / heredoc → 回 Step 5(Write 临时文件 + `-F <文件>`)
@@ -159,5 +165,5 @@ esac
 
 - 切窗交接落点:本项目的 HANDOFF(或等价文件)
 - 会话记录归档:本项目 `docs/sessions/YYYY-MM-DD.md`(**当天一份、多窗汇总**;或项目 CLAUDE.md 声明的位置)
-- 深链接法 port 自:`yeehang2026/.claude/commands/handoff.md` 的 `/handoff`
+- 深链接法 port 自:`yeehang2026/.claude/commands/handoff.md` 的 `/handoff`(历史出处,原文件已删)
 - 项目特定增强(如 TOPS):项目本地 CLAUDE.md §切窗信号 + 项目执行追踪 skill(如 tops-phase-tracking)
