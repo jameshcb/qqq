@@ -1,0 +1,77 @@
+{
+  "skill_name": "qqq",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "qqq",
+      "expected_output": "Runs the full handoff ritual in a clean Git project, records an honest retrospective, updates forward-looking handoff state, and reports every side effect truthfully.",
+      "files": [],
+      "expectations": [
+        "Selects full mode because the user message is exactly qqq",
+        "Includes at least one concrete weakness and routes each reusable lesson",
+        "Stages only qqq-owned paths and checks active no-push instructions before push",
+        "Reports archive, handoff, commit, push, and window-open results separately"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "帮我整理一下下个对话应该说什么，先别提交也别开新窗口。",
+      "expected_output": "Creates or proposes handoff artifacts without committing, pushing, or opening a new window.",
+      "files": [],
+      "expectations": [
+        "Selects handoff mode",
+        "Does not commit, push, or open a new window",
+        "Produces a prompt containing 先读, 当前状态, and 下一步",
+        "Does not copy completed-history details into HANDOFF"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/qqq:qqq preview 先让我看看会改哪些文件",
+      "expected_output": "Performs a read-only preview with proposed session, HANDOFF, and next-window prompt content.",
+      "files": [],
+      "expectations": [
+        "Selects preview mode",
+        "Does not write files or mutate Git",
+        "Lists the exact files it would change",
+        "Shows the proposed next-window prompt"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "跑完整 qqq，但我前面说过今天绝对不要 push。",
+      "expected_output": "Completes local handoff work while preserving the active no-push instruction.",
+      "files": [],
+      "expectations": [
+        "Treats the active no-push instruction as overriding full mode",
+        "May create a local commit but does not push",
+        "States clearly that push was withheld",
+        "Does not weaken or reinterpret the user's no-push instruction"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "这个目录不是 Git 仓库，不过还是帮我 qqq，交接给下个窗口。",
+      "expected_output": "Completes the non-Git parts of the handoff and reports Git steps as skipped.",
+      "files": [],
+      "expectations": [
+        "Does not treat missing Git metadata as fatal",
+        "Creates or proposes session and HANDOFF artifacts",
+        "Skips commit and push honestly",
+        "Still produces a validated next-window prompt"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "qqq。注意 HANDOFF.md 是另一个窗口正在改的，别把它的内容卷进我的提交。",
+      "expected_output": "Preserves concurrent edits and refuses unsafe whole-file staging.",
+      "files": [],
+      "expectations": [
+        "Recognizes HANDOFF.md as pre-existing concurrent work",
+        "Avoids whole-file staging when ownership cannot be separated",
+        "Does not use reset, checkout, restore, git add -A, or git commit -a",
+        "Explains what needs user confirmation before commit or push"
+      ]
+    }
+  ]
+}

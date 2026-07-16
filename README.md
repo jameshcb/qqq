@@ -1,33 +1,49 @@
-# qqq · 切窗复盘交接
+# qqq · Claude Code 切窗复盘交接
 
-一个 Claude Code skill 插件:每次**切窗 / 收尾 / 换窗**时跑一套交接仪式,把会话干净地交给下一个窗口。任何项目通用。
+一个用于结束当前会话、把工作可靠交给下一窗口的 Claude Code plugin。
 
-## 它做什么(`/qqq` 触发)
+## 核心流程
 
-1. **诚实复盘**本会话 —— ✅ 做得好的 / ⚠️ 做得不好的(必填,反谄媚)/ 🎓 提炼教训并路由到落地处
-2. **归档会话记录** —— 追加到本项目 `docs/sessions/<YYYY-MM-DD>.md`(当天一份、多窗汇总、只追加,默认进 git;项目 CLAUDE.md 可声明例外)
-3. **更新本项目交接文件**(HANDOFF.md 或等价)—— 停在哪 / 下一步 / 待决
-4. **生成下窗开场词**(指针不是容器:读什么 + 当前状态 1-2 句 + 下一步选项;状态只活在 HANDOFF,软上限 ≤1KB/≤25 行;第一行带 `🪟 日期时间 + 中文主题`,英文上下文堆里一眼定位)
-5. **commit + push**(含 `git add` 暂存核对纪律)
-6. **开预填的新 Claude Code 标签页** —— `vscode://anthropic.claude-code/open?prompt=…` 深链接,提示词已预填,按回车即可继续
+1. 诚实复盘：做得好、做得不好、教训与去向。
+2. 归档本窗：默认追加到 `docs/sessions/YYYY-MM-DD.md`。
+3. 更新交接：HANDOFF 只保留当前状态、下一步和待决。
+4. 生成并验证下窗开场词。
+5. 在授权范围内精确 commit / push。
+6. 用 VS Code 深链接打开预填的新 Claude Code 标签页。
 
-> 深链接法 port 自 yeehang2026 的 `/handoff`;实测能开预填标签页(唯一手动:按一下回车,预填不自动发送 = Anthropic 设计限制)。
-> 跨平台(macOS `open` / Linux `xdg-open` / Windows `start`);handoff 较长时(encoded URL 逼近 Windows 协议处理器 ≈2048 上限)自动降级成预填「读 /tmp 那份交接文件」短指针,长度免疫。
-> ⚠️ 开新标签页这一步依赖 `vscode://` 深链接,**只在 VS Code 宿主里有效**;终端 CLI / 其他 IDE 环境走兜底:开场词以可粘贴 block 给出,手动开新会话粘贴。
+## 调用方式
 
-## 安装(同事 / 你自己)
+安装成 plugin 后，官方命名空间命令是：
 
-仓库是 public,直接装,不用任何凭证。**在终端**跑(官方 `claude` CLI,任何项目目录都行):
+```text
+/qqq:qqq
+```
+
+直接发送纯文本 `qqq` 也会触发完整收尾。其他交接类自然语言只进入无 Git 副作用的 `handoff` 模式。
+
+| 调用 | 行为 |
+|---|---|
+| `/qqq:qqq preview` | 只读预览拟修改文件和开场词 |
+| `/qqq:qqq handoff` | 复盘、归档、HANDOFF、开场词；不提交、不推送、不开窗 |
+| `/qqq:qqq no-push` | 可本地提交，不推送；可开新窗 |
+| `/qqq:qqq`、`/qqq:qqq full` 或纯文本 `qqq` | 完整仪式；仍受项目规则和活跃 no-push 指令约束 |
+
+可以在模式后追加下窗主题，例如：
+
+```text
+/qqq:qqq no-push 修复支付回调测试
+```
+
+## 安装
+
+仓库公开，无需 GitHub 凭证：
 
 ```bash
 claude plugin marketplace add jameshcb/qqq
 claude plugin install qqq@jameshcb
 ```
 
-装完**重开 Claude Code 窗口**(skill 在开窗时加载),任意项目里 `/qqq` 即可触发切窗交接。
-
-> ⚠️ **VSCode 扩展里没有 `/plugin` 斜杠命令**(那是终端 CLI 交互模式才有的)。VSCode 用户用上面的 `claude plugin …` 终端命令装即可 —— 插件装的是全局配置,CLI 和 VSCode 扩展共享同一份,装一次两边都生效。
-> `claude plugin` 是较新的子命令,报 `unknown command` = 先升级 Claude Code 再装。
+安装后运行 `/reload-plugins`；若当前宿主不支持热重载，重开 Claude Code。
 
 ## 更新
 
@@ -35,19 +51,45 @@ claude plugin install qqq@jameshcb
 claude plugin marketplace update jameshcb
 claude plugin update qqq@jameshcb
 ```
-然后重开 Claude Code 窗口。
+
+然后运行 `/reload-plugins` 或重开 Claude Code。
+
+## 设计要点
+
+- 安全模式先行：普通“帮我写交接”不会隐式 commit、push 或开新窗口。
+- 并发友好：记录进入 qqq 前的 Git 基线，不接管其他窗口已有的 dirty 文件。
+- 指针式交接：开场词不复制整份 HANDOFF，只告诉下一窗口读什么、停在哪、选哪一步。
+- 可机械验证：`validate-handoff.mjs` 检查锚行和三件套；`open-handoff.mjs` 统一处理 encoded URL 长度和跨平台打开。
+- 环境降级：没有 Git、remote 或 VS Code 深链接时仍完成可安全完成的部分，并明确报告跳过项。
 
 ## 仓库结构
 
-```
+```text
 qqq/
 ├── .claude-plugin/
-│   ├── marketplace.json   ← 市场名 jameshcb,含 qqq 插件
-│   └── plugin.json        ← 插件元数据
-└── skills/
-    └── qqq/
-        ├── SKILL.md
-        └── assets/handoff-prompt-template.md
+│   ├── marketplace.json
+│   └── plugin.json
+├── skills/qqq/
+│   ├── SKILL.md
+│   ├── assets/handoff-prompt-template.md
+│   ├── references/git-safety.md
+│   ├── scripts/
+│   │   ├── open-handoff.mjs
+│   │   └── validate-handoff.mjs
+│   └── evals/evals.json
+└── CHANGELOG.md
 ```
 
-> 改 skill 动 `skills/qqq/`,**并同步 bump `.claude-plugin/plugin.json` 和 `marketplace.json` 的版本号** —— version 是 Claude Code 的更新缓存键,不 bump 光推 commit,同事跑 update 也拿不到新文件。push 后同事按上方〈更新〉两条命令 + 重开窗口即同步(完整发版链见 SKILL.md Step 1〈升格操作链〉)。
+## 开发验证
+
+```bash
+claude plugin validate . --strict
+node skills/qqq/scripts/validate-handoff.mjs /tmp/qqq-test-handoff.txt
+node skills/qqq/scripts/open-handoff.mjs \
+  --file /tmp/qqq-test-handoff.txt \
+  --project test \
+  --topic 测试 \
+  --dry-run
+```
+
+发布版使用 `.claude-plugin/plugin.json` 的语义化版本作为更新缓存键。`marketplace.json` 的 `metadata.version` 仅用于市场元数据展示，不是插件缓存键。

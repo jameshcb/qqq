@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "qqq",
   "displayName": "qqq · 切窗复盘交接",
-  "description": "切窗(收尾/换窗)仪式:诚实复盘(好/坏/教训并路由)+ 归档会话记录到 docs/sessions(当天一份、多窗汇总)+ 更新本项目交接文件 + 生成可粘贴的下窗开场词 + commit/push + vscode 深链接开预填新 Claude Code 标签页。任何项目通用。",
-  "version": "0.9.1",
+  "description": "Claude Code 切窗仪式：诚实复盘、归档会话、更新 HANDOFF、生成并验证下窗开场词；按 preview/handoff/no-push/full 模式控制 commit、push 与开新窗口。",
+  "version": "1.0.0",
   "author": {
     "name": "James Huang",
     "email": "huangchuanbing@gmail.com"
   },
   "homepage": "https://github.com/jameshcb/qqq",
   "repository": "https://github.com/jameshcb/qqq",
+  "license": "MIT",
   "keywords": ["handoff", "session-handoff", "切窗", "复盘", "claude-code", "skills"]
 }
