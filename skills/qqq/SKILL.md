@@ -85,6 +85,7 @@ HANDOFF 只写“现在朝前看”：
 - 第一行是 `🪟 YYYY-MM-DD HH:MM 开窗 · 接 <项目> · 本窗:<中文主题>`。
 - 包含“先读 / 当前状态 / 下一步”三件套。
 - 当前状态只写 1–2 句并指向 HANDOFF；不开 commit 流水账。
+- 含一行「模型：」建议：按 [references/model-effort.md](references/model-effort.md) 依下窗主题判定模型与 effort。
 - 只额外携带一句本窗新教训和一句待决。
 - 目标不超过 1KB、25 行；超出时删重复内容，保留指针。
 

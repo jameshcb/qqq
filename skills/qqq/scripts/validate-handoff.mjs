@@ -33,6 +33,9 @@ if (!anchor.test(lines[0] ?? "")) {
 for (const label of ["先读", "当前状态", "下一步"]) {
   if (!normalized.includes(label)) errors.push(`missing required section: ${label}`);
 }
+if (!normalized.includes("模型：")) {
+  warnings.push("missing model suggestion line (模型：…) — see references/model-effort.md");
+}
 if (bytes > 1024) warnings.push(`soft size limit exceeded: ${bytes} bytes > 1024`);
 if (lines.length > 25) warnings.push(`soft line limit exceeded: ${lines.length} > 25`);
 if (/((ghp|github_pat|sk)-[A-Za-z0-9_-]{12,}|AKIA[0-9A-Z]{16})/u.test(normalized)) {

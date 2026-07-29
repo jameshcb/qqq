@@ -22,6 +22,7 @@
         "Selects handoff mode",
         "Does not commit, push, or open a new window",
         "Produces a prompt containing 先读, 当前状态, and 下一步",
+        "Includes a 模型 suggestion line with /model and /effort chosen from the next-window topic",
         "Does not copy completed-history details into HANDOFF"
       ]
     },

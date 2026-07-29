@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- 开场词新增「模型：」行：收尾时按下窗主题判定下窗建议的模型与 effort（判定表在 `references/model-effort.md`，含定价快照与省配额顺序）。
+- `validate-handoff.mjs` 对缺失模型行给软警告（不报错，旧格式仍有效）。
+- eval 2 增加模型建议行期望。
+
 ## 1.0.0
 
 - 增加 `preview`、`handoff`、`no-push`、`full` 四种模式，分离交接文案与 Git/开窗副作用。
