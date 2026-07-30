@@ -36,7 +36,17 @@ for (const label of ["先读", "当前状态", "下一步"]) {
 if (!normalized.includes("模型：")) {
   warnings.push("missing model suggestion line (模型：…) — see references/model-effort.md");
 }
-if (bytes > 1024) warnings.push(`soft size limit exceeded: ${bytes} bytes > 1024`);
+// 尺寸软上限按内容语言取：CJK 一个字 3 字节，拿英文口径(1024B)量中文等于只给 ~340 字，
+// 而模板强制的五段(先读/当前状态/下一步/模型/纪律)在中文里塞不进 —— 恒警告 = 警告被当噪音忽略。
+// 1536B ≈ 512 汉字，够写五段仍拦得住流水账；英文口径不受影响，不因此被带松。
+const cjk = (normalized.match(/[぀-ヿ㐀-䶿一-鿿豈-﫿가-힯]/gu) ?? []).length;
+const cjkHeavy = normalized.length > 0 && cjk / normalized.length >= 0.2;
+const sizeLimit = cjkHeavy ? 1536 : 1024;
+if (bytes > sizeLimit) {
+  warnings.push(
+    `soft size limit exceeded: ${bytes} bytes > ${sizeLimit} (${cjkHeavy ? "CJK" : "latin"} 口径)`,
+  );
+}
 if (lines.length > 25) warnings.push(`soft line limit exceeded: ${lines.length} > 25`);
 if (/((ghp|github_pat|sk)-[A-Za-z0-9_-]{12,}|AKIA[0-9A-Z]{16})/u.test(normalized)) {
   errors.push("possible credential detected");

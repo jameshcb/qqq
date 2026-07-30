@@ -30,6 +30,13 @@ argument-hint: "[preview|handoff|full|no-push] [下窗主题]"
 2. 记录开始时的分支、HEAD、工作树状态和已存在的改动。不要把用户或其他窗口的改动算成 qqq 产出。
 3. 有 Git remote 时 fetch 并检查相对 upstream 的 ahead/behind；落后、分叉或共享工作树在执行中换分支时，停止 Git 写操作并报告。
 4. 没有 Git、没有 remote 或项目明确不归档时，继续完成能安全完成的步骤，不把环境差异当失败。
+5. 核一次 qqq 自身版本，落后就先告诉用户再往下走：
+
+```bash
+node "${CLAUDE_SKILL_DIR}/scripts/version-check.mjs"
+```
+
+会话加载的是 `plugins/cache/<owner>/qqq/<version>/` 里的那一份。别的机器发了版、或本机 pull 了仓却没跑 `claude plugin update`，当前会话照旧跑旧版且**没有任何提示**——旧版不报错，它只是安静地少做事。落后时报给用户由他决定要不要先更新（更新后需重启才生效），**不自动改他的插件安装**。离线或无 remote 时脚本自行降级，不当失败。
 
 执行任何 Git 写操作前，完整阅读 [references/git-safety.md](references/git-safety.md)。
 
@@ -95,7 +102,7 @@ HANDOFF 只写“现在朝前看”：
 - 当前状态只写 1–2 句并指向 HANDOFF；不开 commit 流水账。
 - 含一行「模型：」建议：按 [references/model-effort.md](references/model-effort.md) 依下窗主题判定模型与 effort。
 - 只额外携带一句本窗新教训和一句待决。
-- 目标不超过 1KB、25 行；超出时删重复内容，保留指针。
+- 目标不超过 25 行；字节软上限**按内容语言分档**（中文等 CJK 1.5KB ≈ 512 字 / 拉丁文 1KB），`validate-handoff.mjs` 自动判。超出时删重复内容、保留指针，别删掉三件套里的指针去凑数。
 
 写完运行：
 
@@ -135,7 +142,7 @@ node "${CLAUDE_SKILL_DIR}/scripts/open-handoff.mjs" \
 
 用短清单说明：
 
-- 采用的模式。
+- 采用的模式，以及**本次跑的 qqq 版本号**（§2 那条自检的 `runningVersion`；落后过就一并说明）——让用户一眼看出这套仪式是不是过期版本跑的，不必等下次才发现。
 - 归档、HANDOFF、开场词各写到哪里。
 - commit / push / 开窗分别是否执行；未执行时说明原因。
 - 新窗口若已打开：开场词已预填，用户只需按回车。
