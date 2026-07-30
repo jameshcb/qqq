@@ -78,6 +78,10 @@ HANDOFF 只写“现在朝前看”：
 
 如果交接文件在 qqq 开始前已有未提交改动，不覆盖、不整文件暂存；尽量做局部编辑，并在提交前让用户确认重叠内容。
 
+**提交被闸拦下后，下一次 commit 前先对一眼 `git diff --cached --name-only` 与 `git diff --name-only`。** hook 拦住 commit 不会回滚暂存区，于是 index 与工作区从那一刻起说的不是同一件事，两个方向都已实际发生：多提（拦下时别人 staged 的文件被下一笔一起带走）、漏提（拦下后又编辑了文件，再 commit 提的仍是暂存那一刻的旧版，改动没进去）。两条清单不一致就先补 `git add` 或撤出，别直接重试 commit。
+
+**本窗做完的活，回项目的前瞻台账（BACKLOG 之类）把对应条目划掉。** 台账里躺着的条目会被下窗当成「还没做」直接开工；当天做完却没回写，等于给下一个人留了一把不存在的活。归档 sessions 时顺手过一遍本窗产出，逐条确认台账里的对应项已划掉或改写。
+
 ## 6. 生成并验证下窗开场词
 
 按 [assets/handoff-prompt-template.md](assets/handoff-prompt-template.md) 填写，保存到：
