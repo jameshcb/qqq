@@ -51,7 +51,7 @@ node "${CLAUDE_SKILL_DIR}/scripts/version-check.mjs"
 路由原则：
 
 - 一次性状态 → HANDOFF。
-- 本项目规范 → 项目 `CLAUDE.md`。
+- 本项目规范 → 项目 `CLAUDE.md` **只进一行判据**；事故叙事全文进项目声明的事故档案（如 TOPS = `docs/governance/claude-md-incidents.md`，取下一个 C-NN 编号），**同族再踩只追加档案、不动 `CLAUDE.md` 正文**；项目没有档案约定时才整段写进 `CLAUDE.md`。（2026-08-07 起：叙事回流正文曾让 TOPS CLAUDE.md 三周反弹 5 倍。）
 - 业务决策 → 项目决策文件；需要用户拍板时只记录待决，不代拍。
 - 可复用工作流纪律 → 对应 skill 或 reference。
 - 没有可复用教训时，明确写“无可复用教训”并给理由，不为凑数编造。
