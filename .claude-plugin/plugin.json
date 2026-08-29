@@ -3,7 +3,7 @@
   "name": "qqq",
   "displayName": "qqq · 切窗复盘交接",
   "description": "Claude Code 切窗仪式：诚实复盘、归档会话、更新 HANDOFF、生成并验证下窗开场词；按 preview/handoff/no-push/full 模式控制 commit、push 与开新窗口。",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "author": {
     "name": "James Huang",
     "email": "huangchuanbing@gmail.com"
