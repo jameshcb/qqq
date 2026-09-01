@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.1
+
+- `version-check.mjs` 开发态（直跑仓库而非 `plugins/cache/<owner>/qqq/<version>/`）不再交出 `runningVersion: null`：cache 路径正则匹配不到时，回退读自身旁的 `<仓根>/.claude-plugin/plugin.json`——跑的就是那份代码，所以它同样是「运行中的版本」。输出新增 `runningVersionSource`（`cache-path` / `repo-plugin-json` / `null`）标明来源。⇒ 开发态归档不必再靠「qqq 版本: 未知（…）」过 `validate-session`。
+- 连带：`runningVersion !== marketplaceVersion` 的提示按来源分岔。开发态两边本就是不同 clone、方向常是「仓比 marketplace 新」，照插件态那句喊「你落后了，去 update」是反的。
+- `selfPath` 由 `new URL(import.meta.url).pathname` 改为 `fileURLToPath()`：新增的回退要拿它做文件系统路径，percent-encoding 会在含空格/中文的仓库路径上出错。
+- 落后提示的标题行由「⚠️ qqq 版本落后」改为「⚠️ qqq 版本对不上」：开发态分岔下方向可能是「仓比 marketplace 新」，标题写死「落后」与正文矛盾。
+- SKILL §4 与 `validate-session.mjs` 头注同步口径：「未知」只留给 `runningVersion` **确为** null（脚本被拷出仓库结构）的情况。
+
 ## 1.6.0
 
 背景：2026-09-01 James 拍板 —— 知识库的 per-deploy 义务移到项目侧（部署流程自带），qqq 降为**窗级兜底核对**；通用插件不该认得某一个项目的目录，表态要落盘可验，副作用要有回执。

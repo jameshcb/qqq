@@ -13,14 +13,32 @@
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 
 const checkRemote = !process.argv.includes("--no-remote");
 
-/// 当前**运行中**的版本：cache 路径自带版本号(.../cache/<owner>/qqq/<version>/skills/qqq/scripts/)。
-/// 直接从 marketplace 仓跑(开发态)时匹配不到 → null，此时无「运行版本 vs 仓版本」之差可言。
-const selfPath = new URL(import.meta.url).pathname;
-const runningVersion = selfPath.match(/\/cache\/[^/]+\/qqq\/([^/]+)\//)?.[1] ?? null;
+/// 当前**运行中**的版本，两种来源：
+///   cache-path       插件态 —— cache 路径自带版本号(.../cache/<owner>/qqq/<version>/skills/qqq/scripts/)。
+///   repo-plugin-json 开发态直跑仓库 —— cache 正则匹配不到，退回读自身旁的 <仓根>/.claude-plugin/plugin.json；
+///                    跑的就是这份代码，所以它同样是「运行中的版本」，只是来源不同，下游据此不必再写「未知」。
+/// 两处都取不到（脚本被单独拷出仓库结构）才是 null。
+const selfPath = fileURLToPath(import.meta.url);
+let runningVersion = selfPath.match(/\/cache\/[^/]+\/qqq\/([^/]+)\//)?.[1] ?? null;
+let runningVersionSource = runningVersion ? "cache-path" : null;
+if (!runningVersion) {
+  // scripts → skills/qqq/scripts → 仓根；插件态与开发态这段目录结构相同。
+  const selfPluginJson = path.resolve(path.dirname(selfPath), "../../../.claude-plugin/plugin.json");
+  try {
+    const json = JSON.parse(fs.readFileSync(selfPluginJson, "utf8"));
+    if (json?.name === "qqq" && json?.version) {
+      runningVersion = json.version;
+      runningVersionSource = "repo-plugin-json";
+    }
+  } catch {
+    /* 不在仓库结构里，维持 null */
+  }
+}
 
 /// 本机 marketplace 仓里的 qqq(= `claude plugin update` 会装的那一版)。
 function findMarketplaceRepo() {
@@ -67,8 +85,11 @@ if (checkRemote && local) {
 
 const stale = [];
 if (runningVersion && local && runningVersion !== local.version) {
+  // 开发态两边本就是不同 clone，方向可能是「仓比 marketplace 新」，别照插件态那句喊「你落后了」。
   stale.push(
-    `运行中的是 ${runningVersion}，而本机 marketplace 仓已是 ${local.version} —— 跑 \`claude plugin update qqq@<owner>\` 后**重启**才生效`,
+    runningVersionSource === "repo-plugin-json"
+      ? `开发态直跑的仓库是 ${runningVersion}，本机 marketplace 仓是 ${local.version} —— 两处不同步，发版后 \`git -C ${local.repo} pull --ff-only\` 再 \`claude plugin update qqq@<owner>\``
+      : `运行中的是 ${runningVersion}，而本机 marketplace 仓已是 ${local.version} —— 跑 \`claude plugin update qqq@<owner>\` 后**重启**才生效`,
   );
 }
 if (behind !== null && behind > 0) {
@@ -79,6 +100,7 @@ if (behind !== null && behind > 0) {
 
 const result = {
   runningVersion,
+  runningVersionSource,
   marketplaceVersion: local?.version ?? null,
   marketplaceRepo: local?.repo ?? null,
   behindRemote: behind,
@@ -89,7 +111,7 @@ const result = {
 
 console.log(JSON.stringify(result, null, 2));
 if (stale.length > 0) {
-  console.error("\n⚠️ qqq 版本落后，本次仪式会少做事：");
+  console.error("\n⚠️ qqq 版本对不上，本次仪式可能跑在过期版上：");
   for (const s of stale) console.error(`   · ${s}`);
 }
 process.exit(0);

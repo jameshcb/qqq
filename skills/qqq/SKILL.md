@@ -51,7 +51,7 @@ argument-hint: "[preview|handoff|full|no-push] [下窗主题]"
 qqq 版本: <runningVersion>           自检报落后时写    qqq 版本: X.Y.Z（落后，marketplace=Y.Y.Y，缺:<一句>）
 ```
 
-  `runningVersion` 取 §2 自检输出；为 null（开发态直跑仓库）时写 `qqq 版本: 未知（<原因>）`。
+  `runningVersion` 取 §2 自检输出（开发态直跑仓库时它回退读仓根 `plugin.json`，同样有值）；仅在它确为 null 时写 `qqq 版本: 未知（<原因>）`。
 
 写完运行 `node "${CLAUDE_SKILL_DIR}/scripts/validate-session.mjs" "<session 文件>"`：它取文件里最后一个 `## HH:MM ·` section 核这两行，缺一项 exit 1 并逐条说明，修完再进下一步。`preview` 模式只展示拟追加的 section，不落盘也不跑此脚本。
 

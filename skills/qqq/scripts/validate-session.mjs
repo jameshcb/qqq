@@ -2,7 +2,7 @@
 // 核 sessions 归档最后一个「## HH:MM ·」section 里的两行固定表态（格式定义在 SKILL §4）：
 //   帮助/FAQ: 有 <文件路径>（<编号>）      或  帮助/FAQ: 无（<一句理由>）
 //   qqq 版本: X.Y.Z                          或  qqq 版本: X.Y.Z（落后，marketplace=Y.Y.Y，缺:<一句>）
-//                                            或  qqq 版本: 未知（<原因>）   ← version-check 的 runningVersion 为 null（开发态直跑仓库）时
+//                                            或  qqq 版本: 未知（<原因>）   ← version-check 的 runningVersion 确为 null 时（开发态已回退读仓根 plugin.json，通常有值）
 // 为什么要机械核：1.4.0 / 1.5.0 只要求「回报里说」，说没说无从核 —— 2026-09-01 James 拍「表态落盘可验」。
 //
 // 用法: node validate-session.mjs <session 文件路径>        （preview 模式不跑）
