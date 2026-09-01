@@ -9,6 +9,7 @@
 - **副作用回执**：§9 固定一行 `commit ✓ <sha> | ✗（原因） / push ✓ | ✗（原因） / 开窗 ✓ | ✗（原因）`；§8 末尾要求开窗脚本失败或仪式没执行到这一步时显式说「本次未开新窗」（2026-08-19 实发：仪式跑一半没开窗，用户肉眼才发现）。
 - 三处小修：① 模板「1KB」口径改成与 `validate-handoff.mjs` 一致的分档（CJK 1536B / 拉丁 1024B）；② 凭据正则 `(ghp|github_pat|sk)-` 要求连字符，`ghp_` / `github_pat_` 恒不命中（实测 false），改为真实前缀 `ghp_` / `github_pat_` / `sk-` 并加左边界防 `desk-…` 类英文连字词误报；③ SKILL 瘦身 154 → 104 行 —— §3 两问 + 构建生成物下沉 `references/knowledge-routing.md`，§5 四段事故叙事（分段读者 / 整类清 / 闸拦后 index 分叉 / 台账划掉）下沉 `references/handoff-hygiene.md`，正文各留一行判据 + 链接；§2 version-check 动机压成一行（脚本头注已有）。
 - evals 1 / 2 / 3 / 5 补两行固定格式、回执与「本次未开新窗」的期望；README 补「qqq 项目声明」节、仓库结构与开发验证命令。
+- `references/model-effort.md` 判定表默认档改为 `/model opus` + `/effort high`（2026-09-01 James 拍全局默认 Opus + high；此前表里写 sonnet + high，而 settings 实配从未是它）。仓规范「必跑验证」段补齐五个脚本与 `project-declaration` / `validate-session` 样本。
 
 ## 1.5.0
 

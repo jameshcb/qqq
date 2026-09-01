@@ -21,11 +21,15 @@
 
 ```bash
 claude plugin validate . --strict
-node --check skills/qqq/scripts/validate-handoff.mjs
-node --check skills/qqq/scripts/open-handoff.mjs
+for f in skills/qqq/scripts/*.mjs; do node --check "$f"; done
 ```
 
-再使用一份有效和一份无效 handoff 测试 validator，并对短文本、超长中文文本各跑一次 `open-handoff.mjs --dry-run`，确认分别进入 `full` 和 `pointer` 模式。
+每条都 `cmd > log 2>&1; echo exit=$?` 读退出码。再做四组样本测试：
+
+- `validate-handoff.mjs`：一份有效、一份无效 handoff。
+- `open-handoff.mjs --dry-run`：短文本进 `full`，超长中文进 `pointer`。
+- `project-declaration.mjs`：对本仓跑得到 `found:false` 且 exit 0；对一个含「## qqq 项目声明」段的项目根跑得到 `found:true` 且键值完整。
+- `validate-session.mjs`：含「帮助/FAQ」「qqq 版本」两行的样本 exit 0，缺任一行的样本 exit 1。
 
 最后交叉检查：
 

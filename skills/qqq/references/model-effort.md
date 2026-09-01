@@ -6,19 +6,19 @@
 
 | 下窗任务性质 | 建议（两段都照抄填入，不留占位符） |
 |---|---|
-| 常规开发：CRUD、表单、UI、小 bug、写文档、配置调整 | `/model sonnet` + `/effort high` |
+| 常规开发：CRUD、表单、UI、小 bug、写文档、配置调整 | `/model opus` + `/effort high`（全局默认档，以 `~/.claude/settings.json` 为准） |
 | 纯问答、机械批量改动、整理笔记 | `/model sonnet` + `/effort low` |
-| 难 bug 追踪、架构设计、跨多文件大重构、方案评审 | `/model opus` + `/effort high`；最难的写 `/effort xhigh` |
+| 难 bug 追踪、架构设计、跨多文件大重构、方案评审 | `/model opus` + `/effort xhigh` |
 | 极难长程自主任务（整夜自主跑、超大迁移；罕见） | `/model fable` + `/effort high` |
 
-effort 一律写显式值，不写「保持默认」——effort 设置跨会话持久，上一窗改过档位时「默认」未必是 high。判定依据是任务难度，不是项目重要性。拿不准时选 sonnet：编码与 agentic 任务上 Sonnet 5 已达前代 Opus 水准，成本按标准价约为 Opus 的 60%、Fable 的 30%（2026-08-31 前 Sonnet 优惠价下更低，约 40%/20%）。
+effort 一律写显式值，不写「保持默认」——effort 设置跨会话持久，上一窗改过档位时「默认」未必是 high。判定依据是任务难度，不是项目重要性。拿不准时按默认档；要省配额先降 effort 再降到 sonnet：编码与 agentic 任务上 Sonnet 5 已达前代 Opus 水准，成本按标准价约为 Opus 的 60%、Fable 的 30%（2026-08-31 前 Sonnet 优惠价下更低，约 40%/20%）。
 
 ## 产出格式
 
 写入开场词一行（一句理由，不复制本表）：
 
 ```text
-模型：建议 /model sonnet + /effort high（常规功能开发，Sonnet 足够）
+模型：建议 /model opus + /effort high（常规功能开发，延续默认档）
 ```
 
 当前窗口所用模型若与建议一致，理由可写「延续当前模型」。
