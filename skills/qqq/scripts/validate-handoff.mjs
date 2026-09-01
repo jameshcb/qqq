@@ -48,7 +48,9 @@ if (bytes > sizeLimit) {
   );
 }
 if (lines.length > 25) warnings.push(`soft line limit exceeded: ${lines.length} > 25`);
-if (/((ghp|github_pat|sk)-[A-Za-z0-9_-]{12,}|AKIA[0-9A-Z]{16})/u.test(normalized)) {
+// 凭据前缀按真实形态写：GitHub 是 ghp_ / github_pat_（下划线），OpenAI/Anthropic 是 sk-。
+// 旧正则 (ghp|github_pat|sk)- 要求连字符，前两类恒不命中。左边界防 desk-lamp-… 这类英文连字词误报。
+if (/((?<![A-Za-z0-9_])(ghp_|github_pat_|sk-)[A-Za-z0-9_-]{12,}|AKIA[0-9A-Z]{16})/u.test(normalized)) {
   errors.push("possible credential detected");
 }
 

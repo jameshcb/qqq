@@ -8,9 +8,12 @@
       "files": [],
       "expectations": [
         "Selects full mode because the user message is exactly qqq",
+        "Runs project-declaration.mjs first and uses declared help_dir / incident_archive / sessions_dir / handoff / backlog / finish_script paths, falling back to defaults for missing keys",
         "Includes at least one concrete weakness and routes each reusable lesson",
+        "Session section contains the two fixed lines: 帮助/FAQ: 有 <文件路径>（<编号>） or 帮助/FAQ: 无（<一句理由>）, and qqq 版本: X.Y.Z (with the 落后 form when version-check reports stale), then runs validate-session.mjs",
         "Stages only qqq-owned paths and checks active no-push instructions before push",
-        "Reports archive, handoff, commit, push, and window-open results separately"
+        "Final report restates the 帮助/FAQ and qqq 版本 lines verbatim and includes the receipt line commit ✓ <sha> | ✗（原因） / push ✓ | ✗（原因） / 开窗 ✓ | ✗（原因）",
+        "Reports archive, handoff, commit, push, and window-open results separately; says 本次未开新窗 explicitly if the window was not opened"
       ]
     },
     {
@@ -23,6 +26,8 @@
         "Does not commit, push, or open a new window",
         "Produces a prompt containing 先读, 当前状态, and 下一步",
         "Includes a 模型 suggestion line with /model and /effort chosen from the next-window topic",
+        "Session section still carries the two fixed lines 帮助/FAQ: 有/无（…） and qqq 版本: X.Y.Z, validated by validate-session.mjs",
+        "Receipt line reports commit ✗ / push ✗ / 开窗 ✗ each with the reason handoff mode",
         "Does not copy completed-history details into HANDOFF"
       ]
     },
@@ -35,6 +40,7 @@
         "Selects preview mode",
         "Does not write files or mutate Git",
         "Lists the exact files it would change",
+        "Shows the proposed session section including the two fixed 帮助/FAQ and qqq 版本 lines, but does not run validate-session.mjs",
         "Shows the proposed next-window prompt"
       ]
     },
@@ -59,6 +65,7 @@
         "Does not treat missing Git metadata as fatal",
         "Creates or proposes session and HANDOFF artifacts",
         "Skips commit and push honestly",
+        "Receipt line shows commit ✗（非 Git 目录） / push ✗（非 Git 目录） and an explicit 开窗 result",
         "Still produces a validated next-window prompt"
       ]
     },

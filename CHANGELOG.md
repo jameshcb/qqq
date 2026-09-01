@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.6.0
+
+背景：2026-09-01 James 拍板 —— 知识库的 per-deploy 义务移到项目侧（部署流程自带），qqq 降为**窗级兜底核对**；通用插件不该认得某一个项目的目录，表态要落盘可验，副作用要有回执。
+
+- **项目声明契约**：删掉 SKILL 里的 TOPS 硬编码（§3 两处「如 TOPS = `docs/governance/claude-md-incidents.md` / `docs/training/`」），改为读项目根 `CLAUDE.md` 的「## qqq 项目声明」段（每行 `- key: value`，键 `help_dir` / `help_generators` / `incident_archive` / `sessions_dir` / `handoff` / `backlog` / `finish_script`）。新增 `scripts/project-declaration.mjs` 解析并输出 JSON `{found, root, declaration}`；无 `CLAUDE.md` 或无该段 = 降级不是失败（`found:false`、exit 0），缺某键按各节默认行为（sessions 仍默认 `docs/sessions/`，无 `incident_archive` 仍整段进 `CLAUDE.md`）。契约与样例只写在 README「qqq 项目声明」一处，SKILL §2 第 1 条先跑脚本、§3/§4/§5/§7 改引键名。
+- **「有/无」表态与版本落盘可验**：§4 sessions section 固定两行 `帮助/FAQ: 有 <文件路径>（<编号>）` 或 `帮助/FAQ: 无（<一句理由>）`，以及 `qqq 版本: <runningVersion>`（version-check 报落后时写 `qqq 版本: X.Y.Z（落后，marketplace=Y.Y.Y，缺:<一句>）`；runningVersion 为 null 的开发态写 `未知（<原因>）`）。新增 `scripts/validate-session.mjs`：取文件里最后一个 `## HH:MM ·` section 核这两行，缺一项 exit 1 并逐条说明；`preview` 不跑。§9 回报改为原样复述这两行。此前 1.4.0 / 1.5.0 只要求「回报里说」，说没说无从机械核。
+- **副作用回执**：§9 固定一行 `commit ✓ <sha> | ✗（原因） / push ✓ | ✗（原因） / 开窗 ✓ | ✗（原因）`；§8 末尾要求开窗脚本失败或仪式没执行到这一步时显式说「本次未开新窗」（2026-08-19 实发：仪式跑一半没开窗，用户肉眼才发现）。
+- 三处小修：① 模板「1KB」口径改成与 `validate-handoff.mjs` 一致的分档（CJK 1536B / 拉丁 1024B）；② 凭据正则 `(ghp|github_pat|sk)-` 要求连字符，`ghp_` / `github_pat_` 恒不命中（实测 false），改为真实前缀 `ghp_` / `github_pat_` / `sk-` 并加左边界防 `desk-…` 类英文连字词误报；③ SKILL 瘦身 154 → 104 行 —— §3 两问 + 构建生成物下沉 `references/knowledge-routing.md`，§5 四段事故叙事（分段读者 / 整类清 / 闸拦后 index 分叉 / 台账划掉）下沉 `references/handoff-hygiene.md`，正文各留一行判据 + 链接；§2 version-check 动机压成一行（脚本头注已有）。
+- evals 1 / 2 / 3 / 5 补两行固定格式、回执与「本次未开新窗」的期望；README 补「qqq 项目声明」节、仓库结构与开发验证命令。
+
 ## 1.5.0
 
 - SKILL §3 路由原则新增一档:**别人照着做的操作口径 → 项目的帮助 / FAQ 内容**(项目声明的位置,如 TOPS = `docs/training/`),并要求**显式写「有」或「无」**(同「无可复用教训」姿势)。背景:2026-08-29 James 拍「同步生成知识库」—— 此前帮助内容全靠临时想起来写,界面改了而帮助停在旧写法无人发现。<br>配两条落笔前必答:① **读者是谁、载体有没有权限门** —— 喂 AI 答疑的语料通常整份进 prompt 且零角色过滤,写进去 = 全员可读,成本/供应商/底价类须另走带门的载体(TOPS 实撞:FAQ 语料门 = 任何登录用户,而销售/业务员有意不给 `supplier.read`);② **常青口径 vs 会过期的快照** —— 条数、金额、「目前有 N 个」进 sessions 不进帮助。<br>另记一条机制坑:帮助内容有**构建期生成物**时(打包进 bundle 的语料常量),改完要重跑生成器并提交生成物,否则同步测试红或线上仍是旧内容。
