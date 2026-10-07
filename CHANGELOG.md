@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0
+
+- **「切窗」= 收尾后必须开新窗口**（2026-10-07 James 原话：「我说切窗就是要是切窗完要新开窗口的」）。此前开窗只挂在 `full` / `no-push` 上，用户说「切窗」而没批提交时落进 `handoff`，结果不开窗，每次都要人记得手动跑 `open-handoff.mjs`。改：SKILL §1 加一条——开窗与 commit / push 分开判，没批提交就按 `handoff` 做完、仍执行 §8 开窗；只有用户明说「别开窗」才不开。§8 执行条件、`handoff` 模式说明、frontmatter description、README 模式表同步。
+- evals 新增第 7 条（「切窗吧，先别提交」⇒ 不 commit、不 push、照样开窗）。
+
 ## 1.6.1
 
 - `version-check.mjs` 开发态（直跑仓库而非 `plugins/cache/<owner>/qqq/<version>/`）不再交出 `runningVersion: null`：cache 路径正则匹配不到时，回退读自身旁的 `<仓根>/.claude-plugin/plugin.json`——跑的就是那份代码，所以它同样是「运行中的版本」。输出新增 `runningVersionSource`（`cache-path` / `repo-plugin-json` / `null`）标明来源。⇒ 开发态归档不必再靠「qqq 版本: 未知（…）」过 `validate-session`。

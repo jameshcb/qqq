@@ -80,6 +80,19 @@
         "Does not use reset, checkout, restore, git add -A, or git commit -a",
         "Explains what needs user confirmation before commit or push"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "切窗吧，先别提交。",
+      "expected_output": "Completes the handoff without committing or pushing, and still opens the next window because the user said 切窗.",
+      "files": [],
+      "expectations": [
+        "Treats 切窗 as requiring a new window after the handoff, independent of commit authorization",
+        "Does not commit or push because the user said not to commit",
+        "Runs open-handoff.mjs (or prints the prompt in a copyable block and says 本次未开新窗 if opening fails)",
+        "Receipt line shows commit ✗（用户没批提交） / push ✗（用户没批提交） and an explicit 开窗 result",
+        "Still produces a validated next-window prompt"
+      ]
     }
   ]
 }
